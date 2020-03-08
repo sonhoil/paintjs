@@ -4,6 +4,7 @@ const colors = document.getElementsByClassName("jsColor");
 const range = document.getElementById("jsRange");
 const mode = document.getElementById("jsMode");
 const save = document.getElementById("jsSave");
+const wiper = document.getElementById("jsWiper")
 
 const INITIAL_COLOR = "#2c2c2c"
 const CANVAS_SIZE = 700
@@ -20,6 +21,7 @@ ctx.fillStyle = INITIAL_COLOR;
 
 let painting = false;
 let filling = false;
+let wipers = false;
 
 function handleRangeChange() {
   
@@ -48,16 +50,22 @@ function onMouseMove(event) {
     if (!painting) {
         ctx.beginPath();
         ctx.moveTo(x, y);
-    } else {
+    } else if(painting && !wipers) {
         ctx.lineTo(x, y);
         ctx.stroke();
-       
+        console.log(wipers);
+    } else if(wipers === true){
+        ctx.lineTo(x, y);
+        ctx.stroke();
+        ctx.fill();
     }
 }
 
-function onMouseDown(event) {
+
+
+/*function onMouseDown(event) {
  painting = true;
-}
+}*/
 
 function handleModeClick() {
     if(filling === false){
@@ -87,6 +95,22 @@ function handleSave() {
     link.click();
 }
 
+function handleWiper() {
+    
+    if(wipers === false){
+        painting = false;
+        wipers = true;
+        filling = false;
+        wiper.innerText = "wiper";
+        mode.innerText = "PAINT";
+        console.log(wipers);
+    }else{
+        wipers = false;
+        wiper.innerText = "no wipers";
+        console.log(wipers);
+    }
+}
+
 if (canvas) {
     canvas.addEventListener("mousemove", onMouseMove);
     canvas.addEventListener("mousedown", startPainting);
@@ -94,6 +118,7 @@ if (canvas) {
     canvas.addEventListener("mouseleave", paintingStop);
     canvas.addEventListener("click", handleCanvasClick);
     canvas.addEventListener("contextmenu", handleCM);
+    
 }
 
 Array.from(colors).forEach(color => color.addEventListener("click", handleColorClick));
@@ -105,4 +130,8 @@ mode.addEventListener("click", handleModeClick);
 }
 if(save){
 save.addEventListener("click", handleSave);
+}
+
+if(wiper){
+wiper.addEventListener("click", handleWiper);
 }
